@@ -72,5 +72,8 @@ global:
     ENVIRONMENT: STAGING
     SERVER_PORT: "8080"
     LOG_LEVEL: "INFO"
-    # URL dos SRVs via K8s service name
-    SRV_BFF_PROJECT_URL: "http://rml-srv-BFF_PROJECT"
+    # URLs dos SRVs chamados por este BFF via K8s service name
+    # TODO: substituir pelo(s) SRV(s) real(is) que este BFF consome
+    # Padrão do nome K8s: rml-srv-{dominio}-{projeto}
+    # Exemplo: SRV_CLIENT_URL: "http://rml-srv-client-sovarais"
+    SRV_DOMAIN_URL: "http://rml-srv-DOMAIN-PROJECT"
