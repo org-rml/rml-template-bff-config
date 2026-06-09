@@ -1,0 +1,76 @@
+# E ai Dev!
+# Config repo do BFF rml-bff-BFF_PROJECT.
+# Cada branch corresponde a um ambiente: staging (DEV) / sandbox (HOM) / production (PRD)
+#
+# 'name'         → nome da aplicação
+# 'service.port' → porta do BFF (padrão 8080)
+# 'probes'       → health checks via /actuator/health
+# 'configmap'    → variáveis de ambiente não-sensíveis
+# Secrets (JWT_SECRET, etc.) gerenciados externamente (Sealed Secrets / External Secrets)
+
+global:
+
+  labels:
+    ambiente: STAGING
+    dominio: BFF_DOMAIN
+    projeto: BFF_PROJECT
+
+  replicaCount: 1
+  name: rml-bff-BFF_PROJECT
+
+  strategy:
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 0
+
+  service:
+    port: 8080
+
+  probes:
+    startupProbe:
+      httpGet:
+        path: "/actuator/health/liveness"
+      initialDelaySeconds: 20
+      failureThreshold: 10
+      successThreshold: 1
+      periodSeconds: 20
+      timeoutSeconds: 10
+    livenessProbe:
+      httpGet:
+        path: "/actuator/health/liveness"
+      initialDelaySeconds: 20
+      failureThreshold: 4
+      successThreshold: 1
+      periodSeconds: 20
+      timeoutSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: "/actuator/health/readiness"
+      initialDelaySeconds: 15
+      failureThreshold: 10
+      successThreshold: 1
+      periodSeconds: 20
+      timeoutSeconds: 10
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+  autoscaling:
+    enabled:
+      cpu: true
+      memory: false
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 80
+
+  configmap:
+    ENVIRONMENT: STAGING
+    SERVER_PORT: "8080"
+    LOG_LEVEL: "INFO"
+    # URL dos SRVs via K8s service name
+    SRV_BFF_PROJECT_URL: "http://rml-srv-BFF_PROJECT"

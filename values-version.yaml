@@ -1,0 +1,6 @@
+global:
+  image:
+    repository: ghcr.io/org-rml/BFF_IMAGE
+    pullPolicy: Always
+    tag: "latest"  # bumped by CI
+  appversion: "1.0.0-SNAPSHOT"

@@ -1,0 +1,31 @@
+name: Trigger Workflow App
+
+on:
+  push:
+    branches:
+      - staging
+      - sandbox
+      - production
+    paths-ignore:
+      - '**.md'
+      - '.github/**'
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'ci-bot' }}
+    steps:
+      - name: Acquire target repo
+        id: acquire-target
+        shell: bash
+        env:
+          REPO_NAME: ${{ github.repository }}
+        run: echo "target-repo-name=${REPO_NAME%-config}" >> "${GITHUB_OUTPUT}"
+
+      - name: Dispatch to source repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.CONFIG_REPO_TOKEN }}
+          repository: ${{ steps.acquire-target.outputs.target-repo-name }}
+          event-type: ${{ github.ref_name == 'sandbox' && 'deployment-sandbox' || 'deployment-release' }}
+          client-payload: '{"ref_name": "${{ github.ref_name }}", "sha": "${{ github.sha }}"}'
