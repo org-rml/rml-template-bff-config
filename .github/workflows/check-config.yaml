@@ -4,9 +4,8 @@ on:
   pull_request:
     types: [opened, synchronize]
     branches:
-      - staging
-      - sandbox
-      - production
+      - homolog
+      - main
 
 jobs:
   helm-lint:

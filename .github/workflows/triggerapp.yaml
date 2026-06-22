@@ -3,9 +3,8 @@ name: Trigger Workflow App
 on:
   push:
     branches:
-      - staging
-      - sandbox
-      - production
+      - homolog
+      - main
     paths-ignore:
       - '**.md'
       - '.github/**'
@@ -27,5 +26,5 @@ jobs:
         with:
           token: ${{ secrets.CONFIG_REPO_TOKEN }}
           repository: ${{ steps.acquire-target.outputs.target-repo-name }}
-          event-type: ${{ github.ref_name == 'sandbox' && 'deployment-sandbox' || 'deployment-release' }}
+          event-type: ${{ github.ref_name == 'homolog' && 'deployment-homolog' || 'deployment-release' }}
           client-payload: '{"ref_name": "${{ github.ref_name }}", "sha": "${{ github.sha }}"}'
